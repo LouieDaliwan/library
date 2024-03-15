@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\LibraryBook;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -15,7 +16,9 @@ class LibraryBookDetailsControllerTest extends TestCase
      */
     public function test_can_see_the_names_of_users_who_borrowed_the_book(): void
     {
-        $this->signMember();
+        $this->superAdmin();
+
+        $user = User::factory()->create();
 
         $book1 = LibraryBook::factory()->create([
             'title' => 'The LibraryBook 1',
@@ -26,12 +29,14 @@ class LibraryBookDetailsControllerTest extends TestCase
             'published_at' => now(),
         ]);
 
+        $book1->users()->attach($user->id);
+
         $this->get("/api/libraries/{$book1->library_id}/books/{$book1->id}")
             ->assertSee('The LibraryBook 1')
             ->assertSee('The Author 1')
             ->assertSee('12345678901')
             ->assertSee('borrowed_users_count')
             ->assertSee('borrowed_users_name')
-            ->assertSee(auth()->user()->name);
+            ->assertSee($user->name);
     }
 }

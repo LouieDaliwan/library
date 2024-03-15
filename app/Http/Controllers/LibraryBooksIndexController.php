@@ -7,6 +7,7 @@ use App\Models\Library;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use JetBrains\PhpStorm\NoReturn;
 
 class LibraryBooksIndexController extends Controller
 {

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\LibraryBook;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -43,11 +45,11 @@ class LibraryBooksIndexControllerTest extends TestCase
 
     function test_can_see_how_many_users_borrowed_the_book()
     {
-        $this->superadmin();
+        $this->superAdmin();
 
-        $library = $this->createLibrary();
+        $user = User::factory()->create();
 
-        $book = $library->books()->create([
+        $book = LibraryBook::factory()->create([
             'title' => 'The LibraryBook 1',
             'author' => 'The Author 1',
             'isbn' => '1234567890',
@@ -56,12 +58,9 @@ class LibraryBooksIndexControllerTest extends TestCase
             'published_at' => now(),
         ]);
 
-        $this->signMember();
+        $book->users()->attach($user->id);
 
-        $this->postJson("/api/libraries/{$library->id}/books/{$book->id}/borrow")
-            ->assertCreated();
-
-        $this->getJson("/api/libraries/{$library->id}/books")
+        $this->getJson("/api/libraries/{$book->library_id}/books")
             ->assertSee('The LibraryBook 1')
             ->assertSee('The Author 1')
             ->assertSee('1234567890')
