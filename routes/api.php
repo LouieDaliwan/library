@@ -25,5 +25,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['auth.member'])->group(function() {
         require(__DIR__.'/userbooks/book.php');
     });
-    Route::put('libraries/{library}/books/{book}/borrow-return', UserReturnBorrowedBooksController::class);
 });
