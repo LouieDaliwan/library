@@ -41,13 +41,30 @@ class LibraryBooksIndexControllerTest extends TestCase
             ->assertUnauthorized();
     }
 
-    function test_a_member_cannot_see_the_list_of_library_books()
+    function test_can_see_how_many_users_borrowed_the_book()
     {
         $this->superadmin();
 
         $library = $this->createLibrary();
 
+        $book = $library->books()->create([
+            'title' => 'The LibraryBook 1',
+            'author' => 'The Author 1',
+            'isbn' => '1234567890',
+            'qty' => 2,
+            'price' => 1000,
+            'published_at' => now(),
+        ]);
+
+        $this->signMember();
+
+        $this->postJson("/api/libraries/{$library->id}/books/{$book->id}/borrow")
+            ->assertCreated();
+
         $this->getJson("/api/libraries/{$library->id}/books")
-            ->assertForbidden();
+            ->assertSee('The LibraryBook 1')
+            ->assertSee('The Author 1')
+            ->assertSee('1234567890')
+            ->assertSee('borrowed_users_count');
     }
 }
