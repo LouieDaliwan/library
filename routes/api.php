@@ -3,6 +3,7 @@
 use App\Http\Controllers\LibraryBooksIndexController;
 use App\Http\Controllers\LibraryIndexController;
 
+use App\Http\Controllers\UserReturnBorrowedBooksController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,7 +22,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
 
-    Route::middleware(['auth.member', 'check.library.book', 'exist.borrow.book.user', 'check.library.book.qty'])->group(function() {
+    Route::middleware(['auth.member'])->group(function() {
         require(__DIR__.'/userbooks/book.php');
     });
+    Route::put('libraries/{library}/books/{book}/borrow-return', UserReturnBorrowedBooksController::class);
 });
